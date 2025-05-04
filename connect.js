@@ -1,33 +1,23 @@
 const { exec } = require("child_process");
 
-// Nombre de chunks à tirer au sort
-const LIMIT = 2;
-
-// Requête SQL : uniquement document + metadata (ajuste si besoin)
+// — 2 chunks aléatoires sans la colonne embedding —
 const SQL = `
-  SELECT document, metadata
-    FROM langchain_pg_embedding
-   ORDER BY RANDOM()
-   LIMIT ${LIMIT};
-`;
+  SELECT document, cmetadata, 
+         COALESCE(page_content, content, '') AS chunk_text
+  FROM langchain_pg_embedding
+  ORDER BY RANDOM()
+  LIMIT 2;
+`.replace(/\s+/g, ' ');   // one‑liner pour psql
 
-// Commande shell complète
-const cmd = `
-  PGPASSWORD="DZTWANW7JG6EN6FF" \
-  psql -h vectordb -U postgres -d railway \
-    --no-align --tuples-only \
-    -c "${SQL.replace(/\n/g, ' ')}" \
-  > /tmp/chunks.txt
-`;
+const cmd = [
+  'PGPASSWORD="DZTWANW7JG6EN6FF"',
+  'psql -h vectordb -U postgres -d railway',
+  '--no-align --tuples-only',
+  `-c "${SQL}"`
+].join(' ');
 
-// Exécution
-exec(cmd, { shell: true, maxBuffer: 1024 * 500 }, (err, _stdout, stderr) => {
-  if (err) {
-    console.error(`❌ Erreur psql : ${err.message}`);
-    return;
-  }
-  if (stderr) {
-    console.error(`⚠️ stderr : ${stderr}`);
-  }
-  console.log("✅ Écrit 2 chunks dans /tmp/chunks.txt");
+exec(cmd, { shell: '/bin/sh', maxBuffer: 1024 * 500 }, (err, out, err2) => {
+  if (err) return console.error('❌ psql', err.message);
+  if (err2) console.error('⚠️ stderr', err2);
+  console.log('🧩 2 chunks :\n' + out.trim());
 });
