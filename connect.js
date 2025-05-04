@@ -1,8 +1,8 @@
 const { exec } = require("child_process");
 
 exec(
-  `PGPASSWORD="DZTWANW7JG6EN6FF" psql -h vectordb -U postgres -d railway -c "SELECT * FROM langchain_pg_embedding ORDER BY RANDOM() LIMIT 5;"`,
-  { maxBuffer: 1024 * 5000 },
+  `PGPASSWORD="DZTWANW7JG6EN6FF" psql -h vectordb -U postgres -d railway -c "SELECT * FROM langchain_pg_embedding ORDER BY RANDOM() LIMIT 2;"`,
+  { maxBuffer: 1024 * 1000 }, // 1 Mo max, ça suffit pour 2 lignes complètes
   (error, stdout, stderr) => {
     if (error) {
       console.error(`❌ Erreur : ${error.message}`);
@@ -11,6 +11,6 @@ exec(
     if (stderr) {
       console.error(`⚠️ stderr : ${stderr}`);
     }
-    console.log(`📦 Données complètes de 5 chunks aléatoires :\n${stdout.trim()}`);
+    console.log(`📦 2 chunks aléatoires (toutes colonnes) :\n${stdout.trim()}`);
   }
 );
