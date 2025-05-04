@@ -6,7 +6,12 @@ const cmd = `
   PGPASSWORD="DZTWANW7JG6EN6FF" \
   psql -h vectordb -U postgres -d railway \
     --no-align --tuples-only \
-    -c "COPY (SELECT * FROM langchain_pg_embedding WHERE document = '${FILE_ID}') TO STDOUT WITH CSV HEADER;"
+    -c "COPY (
+          SELECT * 
+            FROM langchain_pg_embedding 
+           WHERE custom_id = '${FILE_ID}' 
+              OR document  = '${FILE_ID}'
+         ) TO STDOUT WITH CSV HEADER;"
 `;
 
 exec(cmd, { shell: "/bin/sh", maxBuffer: 1024 * 5000 }, (err, stdout, stderr) => {
@@ -15,5 +20,5 @@ exec(cmd, { shell: "/bin/sh", maxBuffer: 1024 * 5000 }, (err, stdout, stderr) =>
     if (stderr) console.error(stderr);
     return;
   }
-  console.log(`📦 Chunks pour ${FILE_ID} :\n` + stdout);
+  console.log(`📦 Chunks for ${FILE_ID} :\n` + stdout.trim());
 });
