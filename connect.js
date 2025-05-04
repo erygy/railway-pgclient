@@ -2,6 +2,7 @@ const { exec } = require("child_process");
 
 const FILE_ID = "dc139773-0fd3-4861-b8ca-b3493384399e";
 
+
 const cmd = `
   PGPASSWORD="DZTWANW7JG6EN6FF" \
   psql -h vectordb -U postgres -d railway \
