@@ -17,7 +17,7 @@ exec(
 
     // 2. Affiche les 3 premiers chunks
     exec(
-      `PGPASSWORD="DZTWANW7JG6EN6FF" psql -h vectordb -U postgres -d railway -c "SELECT content FROM langchain_pg_embedding WHERE document = '${FILE_ID}' LIMIT 3;"`,
+      `PGPASSWORD="DZTWANW7JG6EN6FF" psql -h vectordb -U postgres -d railway -c "SELECT page_content FROM langchain_pg_embedding WHERE document = '${FILE_ID}' LIMIT 3;"`,
       (error2, stdout2, stderr2) => {
         if (error2) {
           console.error(`❌ Erreur lors de l'affichage des contenus : ${error2.message}`);
