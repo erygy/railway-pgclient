@@ -1,3 +1,3 @@
 FROM postgres:16
 
-CMD ["tail", "-f", "/dev/null"]
+CMD ["sleep", "infinity"]
